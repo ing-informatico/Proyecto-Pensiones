@@ -3,6 +3,7 @@ package com.FPV.pensiones.controller;
 
 import com.FPV.pensiones.exceptions.RequestException;
 import com.FPV.pensiones.model.DTO.ErrorDTO;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +77,14 @@ public class ControllerAdvice {
                 .message("Error al enviar el correo electrónico: " + ex.getMessage())
                 .build();
         return new ResponseEntity<>(errorDTO, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorDTO> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        ErrorDTO errorDTO = ErrorDTO.builder()
+                .message("El correo ya existe!!: " + ex.getMessage())
+                .build();
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
 }
